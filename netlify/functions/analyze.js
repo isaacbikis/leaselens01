@@ -6,15 +6,14 @@ exports.handler = async function (event) {
   try {
     const body = JSON.parse(event.body);
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch("https://api.x.ai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
+        "Authorization": `Bearer ${process.env.GROK_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: process.env.GROK_MODEL || "grok-3",
         max_tokens: 1000,
         messages: body.messages,
       }),
@@ -22,13 +21,17 @@ exports.handler = async function (event) {
 
     const data = await response.json();
 
+    const text = data.choices?.[0]?.message?.content || "";
+
     return {
       statusCode: 200,
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        content: [{ type: "text", text }]
+      }),
     };
   } catch (err) {
     return {
