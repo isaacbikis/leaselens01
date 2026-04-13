@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LeaseLens — Know What You're Signing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green: #1D9E75;
+  --green-dark: #0F6E56;
+  --green-deep: #04342C;
+  --green-light: #E1F5EE;
+  --green-mid: #9FE1CB;
+  --amber: #EF9F27;
+  --amber-light: #FAEEDA;
+  --red: #E24B4A;
+  --red-light: #FCEBEB;
+  --ink: #1a1a1a;
+  --ink-2: #444;
+  --ink-3: #777;
+  --ink-4: #aaa;
+  --border: #e8e8e8;
+  --bg: #F8F7F3;
+  --surface: #fff;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* NAV */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(248,247,243,0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+}
+.nav-logo span { color: var(--green); }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-links a {
+  font-size: 14px;
+  color: var(--ink-3);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--ink); }
+
+.nav-cta {
+  background: var(--green) !important;
+  color: #fff !important;
+  padding: 7px 16px !important;
+  border-radius: 8px;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  transition: background 0.2s !important;
+}
+.nav-cta:hover { background: var(--green-dark) !important; }
+
+/* HERO */
+.hero {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 6rem 2rem 4rem;
+  text-align: center;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--green-light);
+  color: var(--green-dark);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 14px;
+  border-radius: 20px;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.03em;
+}
+
+.pulse {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(0.85); } }
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 6vw, 56px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -1px;
+  margin-bottom: 1.25rem;
+}
+.hero h1 em { font-style: italic; color: var(--green); }
+
+.hero-sub {
+  font-size: 17px;
+  color: var(--ink-3);
+  max-width: 520px;
+  margin: 0 auto 2rem;
+  font-weight: 300;
+  line-height: 1.65;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+
+.btn-primary {
+  background: var(--green);
+  color: #fff;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.2s;
+}
+.btn-primary:hover { background: var(--green-dark); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-2);
+  border: 1px solid var(--border);
+  padding: 13px 24px;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.2s;
+}
+.btn-ghost:hover { background: var(--surface); }
+
+.hero-trust {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--ink-4);
+}
+.trust-item { display: flex; align-items: center; gap: 5px; }
+
+/* FLAG STRIP */
+.flag-strip {
+  background: var(--green-deep);
+  padding: 1.5rem 2rem;
+}
+.flag-strip-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+}
+.ex-flag {
+  background: rgba(255,255,255,0.07);
+  border-radius: 10px;
+  padding: 12px 14px;
+  border-left: 3px solid transparent;
+}
+.ex-flag.red { border-left-color: var(--red); }
+.ex-flag.yellow { border-left-color: var(--amber); }
+.ex-flag.green { border-left-color: var(--green); }
+
+.ex-sev { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+.ex-sev.red { color: #f09595; }
+.ex-sev.yellow { color: #FAC775; }
+.ex-sev.green { color: var(--green-mid); }
+.ex-title { font-size: 13px; font-weight: 500; color: #fff; margin-bottom: 3px; }
+.ex-body { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+/* SECTIONS */
+.wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 5rem 2rem;
+}
+
+.section-eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--green);
+  margin-bottom: 0.5rem;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(26px, 4vw, 36px);
+  font-weight: 500;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+}
+.section-sub {
+  font-size: 15px;
+  color: var(--ink-3);
+  max-width: 500px;
+  font-weight: 300;
+  margin-bottom: 3rem;
+}
+
+/* STATS */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr); max-width: 280px; margin-left: auto; margin-right: auto;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  font-weight: 500;
+  color: var(--green);
+  letter-spacing: -1px;
+  margin-bottom: 4px;
+}
+.stat-label { font-size: 13px; color: var(--ink-3); }
+
+/* TESTIMONIALS */
+.testimonials {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+.testimonial {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem;
+}
+.stars { font-size: 12px; color: var(--amber); margin-bottom: 8px; letter-spacing: 1px; }
+.testimonial-text {
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+.t-author { display: flex; align-items: center; gap: 8px; }
+.avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 500;
+}
+.av-teal { background: var(--green-light); color: var(--green-dark); }
+.av-amber { background: var(--amber-light); color: #854F0B; }
+.av-blue { background: #E6F1FB; color: #185FA5; }
+.author-name { font-size: 13px; font-weight: 500; }
+.author-loc { font-size: 11px; color: var(--ink-4); }
+
+/* STEPS */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+.step {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+.step-num {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--green-light);
+  color: var(--green-dark);
+  font-size: 13px; font-weight: 500;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1rem;
+}
+.step h3 { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
+.step p { font-size: 13px; color: var(--ink-3); line-height: 1.55; }
+
+/* PRICING */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.pricing-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem;
+  position: relative;
+}
+.pricing-card.pro {
+  background: var(--green-deep);
+  border-color: transparent;
+}
+.pricing-badge {
+  display: inline-block;
+  font-size: 10px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 1.25rem;
+}
+.badge-free { background: var(--green-light); color: var(--green-dark); }
+.badge-pro { background: rgba(255,255,255,0.12); color: var(--green-mid); }
+
+.pricing-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 500;
+  margin-bottom: 4px; color: var(--ink);
+}
+.pricing-card.pro .pricing-name { color: #fff; }
+
+.pricing-price {
+  font-size: 36px; font-weight: 500;
+  color: var(--ink); letter-spacing: -1px; margin-bottom: 4px;
+}
+.pricing-card.pro .pricing-price { color: #fff; }
+
+.pricing-per { font-size: 13px; color: var(--ink-4); margin-bottom: 1.5rem; }
+.pricing-card.pro .pricing-per { color: rgba(255,255,255,0.4); }
+
+.pricing-div { height: 1px; background: var(--border); margin-bottom: 1.25rem; }
+.pricing-card.pro .pricing-div { background: rgba(255,255,255,0.1); }
+
+.feat-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.75rem; }
+.feat-item { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--ink-2); }
+.pricing-card.pro .feat-item { color: rgba(255,255,255,0.8); }
+
+.feat-yes {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--green-light);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+  font-size: 10px; color: var(--green-dark);
+}
+.pricing-card.pro .feat-yes { background: rgba(29,158,117,0.3); color: var(--green-mid); }
+
+.feat-no {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+  font-size: 10px; color: #ccc;
+}
+
+.pbtn-free {
+  width: 100%; padding: 12px;
+  background: var(--green-light); color: var(--green-dark);
+  border: none; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: background 0.2s;
+  text-decoration: none; display: block; text-align: center;
+}
+.pbtn-free:hover { background: #c4ead8; }
+
+.pbtn-pro {
+  width: 100%; padding: 12px;
+  background: var(--green); color: #fff;
+  border: none; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: background 0.2s;
+  display: block; text-align: center; text-decoration: none;
+}
+.pbtn-pro:hover { background: #5DCAA5; }
+
+.most-pop {
+  position: absolute; top: 1.25rem; right: 1.25rem;
+  font-size: 10px; font-weight: 500;
+  background: rgba(29,158,117,0.25); color: var(--green-mid);
+  padding: 3px 9px; border-radius: 20px; letter-spacing: 0.05em;
+}
+
+/* SCRIPT PREVIEW */
+.script-preview {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-top: 1.5rem;
+}
+.script-head {
+  background: var(--green-deep);
+  padding: 1.25rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.script-head h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px; font-weight: 500; color: #fff; margin-bottom: 2px;
+}
+.script-head p { font-size: 12px; color: var(--green-mid); }
+.lock-pill {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);
+  font-size: 11px; padding: 5px 10px; border-radius: 6px;
+}
+.script-body { padding: 1.5rem; }
+.script-text {
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  font-size: 13px; color: var(--ink-2); line-height: 1.7;
+  position: relative; overflow: hidden;
+  min-height: 160px;
+}
+.script-fade {
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 65%;
+  background: linear-gradient(to bottom, transparent, var(--bg));
+  border-radius: 0 0 10px 10px;
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 1rem;
+}
+.script-pill {
+  font-size: 12px; color: var(--green-dark); font-weight: 500;
+  background: var(--green-light); padding: 5px 14px; border-radius: 20px;
+}
+
+/* DIVIDER */
+hr { border: none; border-top: 1px solid var(--border); }
+
+/* ANALYZER */
+.analyzer-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 5rem 2rem 6rem;
+}
+.analyzer-header { text-align: center; margin-bottom: 2.5rem; }
+
+.upload-zone {
+  border: 1.5px dashed #ccc;
+  border-radius: 14px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  background: var(--surface);
+  margin-bottom: 1rem;
+}
+.upload-zone:hover, .upload-zone.dragging { border-color: var(--green); background: #f0fdf8; }
+.upload-icon {
+  width: 50px; height: 50px;
+  background: var(--green-light); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1rem; font-size: 22px;
+}
+.upload-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; color: var(--ink); }
+.upload-sub { font-size: 13px; color: #888; }
+
+.or-paste {
+  font-size: 12px; color: #bbb;
+  text-align: center; margin: 0.75rem 0;
+  position: relative;
+}
+.or-paste::before, .or-paste::after {
+  content: ''; position: absolute; top: 50%;
+  width: 42%; height: 0.5px; background: #ddd;
+}
+.or-paste::before { left: 0; }
+.or-paste::after { right: 0; }
+
+textarea {
+  width: 100%; min-height: 130px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px;
+  resize: vertical; border-radius: 10px;
+  border: 1px solid #ddd; background: var(--surface); color: var(--ink);
+  padding: 12px 14px; line-height: 1.6; outline: none; transition: border-color 0.2s;
+}
+textarea:focus { border-color: var(--green); }
+
+.analyze-btn {
+  width: 100%; padding: 14px;
+  background: var(--green); color: white;
+  border: none; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
+  cursor: pointer; margin-top: 1rem; transition: background 0.2s;
+}
+.analyze-btn:hover { background: var(--green-dark); }
+
+.loading { display: none; text-align: center; padding: 4rem 2rem; }
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--green-light); border-top-color: var(--green);
+  border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 14px; color: #777; line-height: 1.7; }
+
+.results { display: none; }
+.results-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #eee;
+}
+.results-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 500; }
+.score-pill { font-size: 13px; font-weight: 500; padding: 6px 14px; border-radius: 20px; }
+.score-good { background: var(--green-light); color: var(--green-dark); }
+.score-mid  { background: var(--amber-light); color: #854F0B; }
+.score-bad  { background: var(--red-light); color: #A32D2D; }
+
+.rsec { margin-bottom: 1.75rem; }
+.rsec-label {
+  font-size: 11px; font-weight: 500; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--ink-4); margin-bottom: 0.75rem;
+}
+.summary-box {
+  background: var(--bg); border-radius: 10px;
+  padding: 14px 16px; font-size: 14px; line-height: 1.7; color: #555;
+}
+.flag-card {
+  background: var(--surface); border: 1px solid #eee;
+  border-radius: 10px; padding: 12px 14px; margin-bottom: 8px;
+}
+.flag-card.red    { border-left: 3px solid var(--red); }
+.flag-card.yellow { border-left: 3px solid var(--amber); }
+.flag-card.green  { border-left: 3px solid var(--green); }
+.flag-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+.flag-body  { font-size: 13px; color: #666; line-height: 1.55; }
+.flag-sev { font-size: 11px; font-weight: 500; margin-top: 6px; }
+.sev-red    { color: #A32D2D; }
+.sev-yellow { color: #854F0B; }
+.sev-green  { color: var(--green-dark); }
+
+.neg-item {
+  display: flex; gap: 10px; padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px; color: #444; align-items: flex-start;
+}
+.neg-item:last-child { border-bottom: none; }
+.neg-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-top: 6px; flex-shrink: 0; }
+
+.results-upsell {
+  background: var(--green-deep); border-radius: 14px;
+  padding: 1.75rem 2rem; margin-top: 2rem;
+  display: grid; grid-template-columns: 1fr auto; gap: 1.5rem; align-items: center;
+}
+.ru-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px; font-weight: 500; color: #fff; margin-bottom: 10px;
+}
+.ru-feats { display: flex; flex-direction: column; gap: 6px; }
+.ru-feat { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--green-mid); }
+.ru-check { color: var(--green); font-size: 13px; }
+.ru-right { flex-shrink: 0; text-align: center; }
+.ru-price { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 500; color: #fff; letter-spacing: -0.5px; }
+.ru-per { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 12px; }
+.ru-btn {
+  background: var(--green); color: #fff; border: none;
+  padding: 11px 22px; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+  cursor: pointer; white-space: nowrap; transition: background 0.2s;
+}
+.ru-btn:hover { background: #5DCAA5; }
+
+.restart-btn {
+  width: 100%; padding: 11px; background: transparent;
+  border: 1px solid #ddd; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; color: #888;
+  cursor: pointer; margin-top: 1rem; transition: background 0.2s;
+}
+.restart-btn:hover { background: #f5f5f5; }
+
+.error-msg { font-size: 13px; color: #A32D2D; margin-top: 8px; display: none; }
+#file-input { display: none; }
+
+/* FOOTER */
+footer {
+  background: var(--green-deep);
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+.foot-logo { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 500; color: #fff; margin-bottom: 6px; }
+.foot-logo span { color: var(--green-mid); }
+.foot-sub { font-size: 13px; color: rgba(255,255,255,0.3); }
+
+@media (max-width: 600px) {
+  .steps, .pricing-grid, .testimonials, .stat-row, .flag-strip-inner { grid-template-columns: 1fr; }
+  .results-upsell { grid-template-columns: 1fr; }
+  .ru-right { text-align: left; }
+  .nav-links a:not(.nav-cta) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Lease<span>Lens</span></a>
+  <div class="nav-links">
+    <a href="#how-it-works">How it works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#analyzer" class="nav-cta">Analyze my lease →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <div class="pulse"></div>
+    Helping more renters every single day
+  </div>
+  <h1>Your landlord has a lawyer.<br/>Now <em>you do too.</em></h1>
+  <p class="hero-sub">Paste your lease and get a plain-English breakdown of every red flag, tenant right, and negotiating lever — in under 30 seconds.</p>
+  <div class="hero-actions">
+    <a href="#analyzer" class="btn-primary">Analyze my lease free →</a>
+    <a href="#how-it-works" class="btn-ghost">See how it works</a>
+  </div>
+  <div class="hero-trust">
+    <div class="trust-item">✓ No account needed</div>
+    <div class="trust-item">✓ 1 free analysis</div>
+    <div class="trust-item">✓ Results in ~30 seconds</div>
+    <div class="trust-item">✓ Never stored or shared</div>
+  </div>
+</section>
+
+<!-- EXAMPLE FLAGS -->
+<div class="flag-strip">
+  <div class="flag-strip-inner">
+    <div class="ex-flag red">
+      <p class="ex-sev red">⚠ High concern</p>
+      <p class="ex-title">Unlimited entry clause</p>
+      <p class="ex-body">Landlord can enter with no notice — illegal in most states. Should require 24–48 hrs written notice.</p>
+    </div>
+    <div class="ex-flag yellow">
+      <p class="ex-sev yellow">◆ Worth flagging</p>
+      <p class="ex-title">Auto-renew with rate hike</p>
+      <p class="ex-body">Lease renews monthly at 15% above base rent if you don't give 60 days notice. Most tenants miss this.</p>
+    </div>
+    <div class="ex-flag green">
+      <p class="ex-sev green">✓ Tenant-favorable</p>
+      <p class="ex-title">Maintenance response SLA</p>
+      <p class="ex-body">Landlord must respond to repair requests within 48 hours — enforceable and above the legal minimum.</p>
+    </div>
+  </div>
+</div>
+
+<!-- STATS + TESTIMONIALS -->
+<section class="wrap">
+  <div class="stat-row">
+    
+    
+    <div class="stat-card"><div class="stat-num">91%</div><div class="stat-label">found at least one red flag</div></div>
+  </div>
+  <div class="testimonials">
+    <div class="testimonial">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Found a clause that would have cost me $800 in 'cleaning fees' I'd never agreed to. Negotiated it out before signing."</p>
+      <div class="t-author">
+        <div class="avatar av-teal">JM</div>
+        <div><div class="author-name">Jordan M.</div><div class="author-loc">Denver, CO</div></div>
+      </div>
+    </div>
+    <div class="testimonial">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"First-time renter, had no idea what half my lease said. LeaseLens explained everything in two minutes. Used the Pro script to get my move-in date pushed back a week."</p>
+      <div class="t-author">
+        <div class="avatar av-amber">RK</div>
+        <div><div class="author-name">Riya K.</div><div class="author-loc">Austin, TX</div></div>
+      </div>
+    </div>
+    <div class="testimonial">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Sent the negotiation script to my property manager word for word. They agreed to cap the annual rent increase at 3%. Worth every penny of Pro."</p>
+      <div class="t-author">
+        <div class="avatar av-blue">TC</div>
+        <div><div class="author-name">Tyler C.</div><div class="author-loc">Chicago, IL</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr />
+
+<!-- HOW IT WORKS -->
+<section class="wrap" id="how-it-works">
+  <p class="section-eyebrow">How it works</p>
+  <h2 class="section-title">Three steps. Thirty seconds.</h2>
+  <p class="section-sub">No legal degree required. No reading 40 pages of fine print.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Paste or upload</h3>
+      <p>Drop in your full lease, a specific section, or even just the clause you're worried about. PDF or plain text both work.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Get your report</h3>
+      <p>AI reads every clause and surfaces red flags, yellow flags, and tenant-favorable terms — color-coded and explained in plain English.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Negotiate with confidence</h3>
+      <p>Free tier shows you what to push for. Pro gives you the exact word-for-word message to send your landlord — proven to work.</p>
+    </div>
+  </div>
+</section>
+
+<hr />
+
+<!-- PRICING -->
+<section class="wrap" id="pricing">
+  <p class="section-eyebrow">Pricing</p>
+  <h2 class="section-title">Simple. Transparent.</h2>
+  <p class="section-sub">Start free. Upgrade when you're ready to act on what you find.</p>
+
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <span class="pricing-badge badge-free">Free</span>
+      <div class="pricing-name">LeaseLens Free</div>
+      <div class="pricing-price">$0</div>
+      <div class="pricing-per">1 analysis · no account needed</div>
+      <div class="pricing-div"></div>
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-yes">✓</span> Full lease scan &amp; risk score</li>
+        <li class="feat-item"><span class="feat-yes">✓</span> Plain-English flag explanations</li>
+        <li class="feat-item"><span class="feat-yes">✓</span> List of what to negotiate</li>
+        <li class="feat-item"><span class="feat-no">✗</span> Word-for-word negotiation script</li>
+        <li class="feat-item"><span class="feat-no">✗</span> Clause rewrite suggestions</li>
+        <li class="feat-item"><span class="feat-no">✗</span> Unlimited analyses</li>
+        <li class="feat-item"><span class="feat-no">✗</span> Move-in checklist + PDF report</li>
+        <li class="feat-item"><span class="feat-no">✗</span> Tenant rights by state</li>
+      </ul>
+      <a href="#analyzer" class="pbtn-free">Analyze my lease free</a>
+    </div>
+
+    <div class="pricing-card pro">
+      <span class="most-pop">Most popular</span>
+      <span class="pricing-badge badge-pro">Pro</span>
+      <div class="pricing-name">LeaseLens Pro</div>
+      <div class="pricing-price">$17</div>
+      <div class="pricing-per">one-time · covers your current lease</div>
+      <div class="pricing-div"></div>
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-yes">✓</span> Everything in Free</li>
+        <li class="feat-item"><span class="feat-yes">✓</span> Word-for-word negotiation script</li>
+        <li class="feat-item"><span class="feat-yes">✓</span> Clause rewrite suggestions</li>
+        <li class="feat-item"><span class="feat-yes">✓</span> Unlimited re-scans</li>
+        <li class="feat-item"><span class="feat-yes">✓</span> Move-in checklist generator</li>
+        <li class="feat-item"><span class="feat-yes">✓</span> Tenant rights by state</li>
+        <li class="feat-item"><span class="feat-yes">✓</span> Email your report as PDF</li>
+      </ul>
+      <a href="#analyzer" class="pbtn-pro">Get LeaseLens Pro →</a>
+    </div>
+  </div>
+
+  <!-- SCRIPT PREVIEW -->
+  <div class="script-preview">
+    <div class="script-head">
+      <div>
+        <h3>What a Pro negotiation script looks like</h3>
+        <p>Real output — generated from a tenant's actual lease flags</p>
+      </div>
+      <div class="lock-pill">🔒 Pro only</div>
+    </div>
+    <div class="script-body">
+      <div class="script-text">
+        <p><strong>Re: Lease clause amendments — [Your Address]</strong></p>
+        <br/>
+        <p>Hi [Landlord name],</p>
+        <br/>
+        <p>Thank you for sending over the lease. I've reviewed it carefully and have a few amendments I'd like to discuss before signing. I believe these are reasonable asks and I'm happy to talk through any of them.</p>
+        <br/>
+        <p><strong>1. Entry notice (Section 9.2):</strong> The current language allows entry without advance notice. Colorado law (C.R.S. § 38-12-1203) requires landlords to provide at least 24 hours written notice except in emergencies. I'd like to update Section 9.2 to reflect this. Suggested language: <em>"Landlord shall provide Tenant no less than 24 hours advance written notice before entering the premises, except in cases of emergency..."</em></p>
+        <div class="script-fade">
+          <span class="script-pill">Unlock full script with Pro →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr />
+
+<!-- ANALYZER -->
+<section class="analyzer-wrap" id="analyzer">
+  <div class="analyzer-header">
+    <p class="section-eyebrow" style="text-align:center;">Free lease analysis</p>
+    <h2 class="section-title" style="text-align:center;">Try it right now</h2>
+    <p class="section-sub" style="text-align:center; margin:0 auto 0;">No account. No credit card. Paste your lease and get your report.</p>
+  </div>
+
+  <div id="input-view" style="margin-top:2rem;">
+    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+      <div class="upload-icon">📄</div>
+      <p class="upload-title" id="upload-title">Drop your lease here</p>
+      <p class="upload-sub" id="upload-sub">PDF or .txt · or paste text below</p>
+    </div>
+    <input type="file" id="file-input" accept=".txt,.pdf" />
+    <div class="or-paste">or paste text</div>
+    <textarea id="lease-text" placeholder="Paste your lease here — the full document, a specific section, or just the clause you're worried about..."></textarea>
+    <p class="error-msg" id="error-msg">Please paste some lease text or upload a file first.</p>
+    <button class="analyze-btn" onclick="analyze()">Analyze my lease free →</button>
+  </div>
+
+  <div class="loading" id="loading-view">
+    <div class="spinner"></div>
+    <p class="loading-text">Reading your lease...<br/><span style="font-size:12px;opacity:0.7;">This usually takes about 20 seconds</span></p>
+  </div>
+
+  <div class="results" id="results-view">
+    <div class="results-header">
+      <p class="results-title">Your Lease Report</p>
+      <div class="score-pill" id="score-pill">—</div>
+    </div>
+    <div class="rsec">
+      <p class="rsec-label">Summary</p>
+      <div class="summary-box" id="summary-box"></div>
+    </div>
+    <div class="rsec">
+      <p class="rsec-label">Flags found</p>
+      <div id="flags-container"></div>
+    </div>
+    <div class="rsec">
+      <p class="rsec-label">What to negotiate</p>
+      <div id="neg-container"></div>
+    </div>
+
+    <div class="results-upsell">
+      <div>
+        <div class="ru-title">Get the full negotiation script</div>
+        <div class="ru-feats">
+          <div class="ru-feat"><span class="ru-check">✓</span> Word-for-word message to send your landlord</div>
+          <div class="ru-feat"><span class="ru-check">✓</span> Clause rewrite suggestions</div>
+          <div class="ru-feat"><span class="ru-check">✓</span> Tenant rights specific to your state</div>
+          <div class="ru-feat"><span class="ru-check">✓</span> Move-in checklist + PDF report</div>
+        </div>
+      </div>
+      <div class="ru-right">
+        <div class="ru-price">$17</div>
+        <div class="ru-per">one-time · this lease</div>
+        <button class="ru-btn">Upgrade to Pro →</button>
+      </div>
+    </div>
+
+    <button class="restart-btn" onclick="restart()">← Analyze another lease</button>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-logo">Lease<span>Lens</span></div>
+  <p class="foot-sub">Not a law firm. Not legal advice. Just the clarity you deserve before you sign.</p>
+</footer>
+
+<script>
+  const uploadZone = document.getElementById('upload-zone');
+  const fileInput = document.getElementById('file-input');
+  const leaseText = document.getElementById('lease-text');
+  const errorMsg = document.getElementById('error-msg');
+
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragging'); });
+  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragging'));
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragging');
+    const f = e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  });
+  fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleFile(fileInput.files[0]); });
+
+  function handleFile(f) {
+    const r = new FileReader();
+    r.onload = e => { leaseText.value = e.target.result; };
+    r.readAsText(f);
+    document.getElementById('upload-title').textContent = f.name;
+    document.getElementById('upload-sub').textContent = 'File loaded — click Analyze to continue';
+  }
+
+  function show(id) {
+    ['input-view','loading-view','results-view'].forEach(v => {
+      document.getElementById(v).style.display = v === id ? 'block' : 'none';
+    });
+  }
+
+  function restart() {
+    leaseText.value = '';
+    document.getElementById('upload-title').textContent = 'Drop your lease here';
+    document.getElementById('upload-sub').textContent = 'PDF or .txt · or paste text below';
+    show('input-view');
+  }
+
+  async function analyze() {
+    const text = leaseText.value.trim();
+    if (!text) {
+      errorMsg.style.display = 'block';
+      leaseText.style.borderColor = '#E24B4A';
+      setTimeout(() => { errorMsg.style.display = 'none'; leaseText.style.borderColor = ''; }, 2500);
+      return;
+    }
+    show('loading-view');
+
+    const prompt = `You are a tenant-rights attorney analyzing a residential lease. Analyze the lease text below and return ONLY a valid JSON object — no markdown, no backticks, no extra text.
+
+JSON structure:
+{
+  "score": "Tenant-Friendly" | "Mixed" | "Landlord-Heavy",
+  "summary": "2-3 sentence plain-English overview of the lease situation",
+  "flags": [
+    { "title": "Short flag name", "body": "Plain-English explanation of the risk or benefit", "severity": "red" | "yellow" | "green" }
+  ],
+  "negotiations": ["One specific negotiation point or ask"]
+}
+
+Include 3-6 flags. Red = serious concern, yellow = worth watching, green = tenant-favorable. Include 3-5 negotiation points. Be specific and practical.
+
+LEASE TEXT:
+${text.slice(0, 6000)}`;
+
+    try {
+      const res = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      const data = await res.json();
+      const raw = data.content.map(b => b.text || '').join('');
+      const result = JSON.parse(raw.replace(/```json|```/g, '').trim());
+      renderResults(result);
+    } catch(e) {
+      show('input-view');
+      leaseText.placeholder = 'Something went wrong. Please try again.';
+    }
+  }
+
+  function renderResults(r) {
+    const pill = document.getElementById('score-pill');
+    pill.textContent = r.score;
+    pill.className = 'score-pill ' + (r.score === 'Tenant-Friendly' ? 'score-good' : r.score === 'Mixed' ? 'score-mid' : 'score-bad');
+    document.getElementById('summary-box').textContent = r.summary;
+
+    const fc = document.getElementById('flags-container');
+    fc.innerHTML = '';
+    (r.flags || []).forEach(f => {
+      const d = document.createElement('div');
+      d.className = `flag-card ${f.severity}`;
+      d.innerHTML = `<p class="flag-title">${f.title}</p><p class="flag-body">${f.body}</p><p class="flag-sev sev-${f.severity}">${f.severity==='red'?'⚠ High concern':f.severity==='yellow'?'◆ Worth flagging':'✓ Tenant-favorable'}</p>`;
+      fc.appendChild(d);
+    });
+
+    document.getElementById('neg-container').innerHTML = (r.negotiations||[]).map(n =>
+      `<div class="neg-item"><div class="neg-dot"></div><span>${n}</span></div>`
+    ).join('');
+
+    show('results-view');
+  }
+</script>
+</body>
+</html>
